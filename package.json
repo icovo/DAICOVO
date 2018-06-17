@@ -1,0 +1,14 @@
+{
+  "name": "daicovo",
+  "version": "0.1.0",
+  "dependencies": {
+    "date-utils": "^1.2.21",
+    "truffle-hdwallet-provider": "^0.0.5"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/icovo/DAICOVO-dev.git"
+  },
+  "author": "ICOVO AG"
+}
