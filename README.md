@@ -29,6 +29,11 @@ In the root directory,
 npm install
 ```
 
+## How it works
+Will be updated.
+
+## Usage
+Will be updated.
 
 ## Licence
 TBD

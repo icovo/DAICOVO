@@ -115,27 +115,27 @@ contract('TimeLockPool test', async (accounts) => {
     let tlp = await TimeLockPool.deployed();
     let token = await OVOToken.deployed();
 
-    let availableBalanceBefore = parseInt(await tlp.getAvailableBalanceOf(investor3, '0x0'));
-    let amountDistribute = 7 * 10**9;
+    let availableBalanceBefore = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0'),'ether'));
+    let amountDistribute = 1;
     let releaseTime = parseInt(Date.now()/1000) - 300;
  
-    assert( await tlp.depositETH(investor3, releaseTime, {from: founder, value:amountDistribute}) != 0x0);
+    assert( await tlp.depositETH(investor3, releaseTime, {from: founder, value:web3.toWei(amountDistribute,"ether")}) != 0x0);
 
-    let returned1 = await tlp.getAvailableBalanceOf(investor3, '0x0');
+    let returned1 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0'),'ether'));
     let expected1 = availableBalanceBefore + amountDistribute;
     assert.equal(returned1, expected1);
 
-    let balanceBefore = parseInt(await web3.eth.getBalance(investor3));
+    let balanceBefore = parseFloat(web3.fromWei(await web3.eth.getBalance(investor3),'ether'));
 
     assert( await tlp.withdraw(investor3, '0x0', {from: founder}) != 0x0);
 
-    let returned2 = await tlp.getAvailableBalanceOf(investor3, '0x0');
+    let returned2 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0')));
     let expected2 = 0;
     assert.equal(returned2, expected2);
 
-    let returned3 = parseInt(await web3.eth.getBalance(investor3));
-    let expected3 = balanceBefore + amountDistribute;
-    assert.isAbove(returned3, expected3*0.99);
+    let returned3 = parseFloat(web3.fromWei(await web3.eth.getBalance(investor3)));
+    let expected3 = balanceBefore + amountDistribute * 0.99;
+    assert.isAbove(returned3, expected3);
   })
 
 });
