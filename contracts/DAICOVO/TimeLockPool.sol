@@ -50,6 +50,7 @@ contract TimeLockPool{
         uint256 amount,
         uint256 releaseTime
     ) external returns (bool) {
+        require(account != address(0x0));
         require(tokenAddr != 0x0);
         require(msg.value == 0);
         require(amount > 0);
@@ -69,6 +70,7 @@ contract TimeLockPool{
         address account,
         uint256 releaseTime
     ) external payable returns (bool) {
+        require(account != address(0x0));
         address tokenAddr = address(0x0);
         uint256 amount = msg.value;
         require(amount > 0);
