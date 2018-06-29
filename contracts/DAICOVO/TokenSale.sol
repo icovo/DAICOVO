@@ -6,6 +6,10 @@ import "./TokenSaleManager.sol";
 import "../crowdsale/distribution/FinalizableCrowdsale.sol";
 import "../crowdsale/validation/WhitelistedCrowdsale.sol";
 
+/// @title Template for token sales.
+/// @author ICOVO AG
+/// @dev This contract is deployed and controlled by TokenSaleManager.
+/// @dev This contract receives funds and transfer them to DAICO pool after being finalized.
 contract TokenSale is FinalizableCrowdsale,
                       WhitelistedCrowdsale {
     using SafeMath for uint256;
@@ -25,6 +29,18 @@ contract TokenSale is FinalizableCrowdsale,
         _;
     }
 
+    /// @dev Constructor.
+    /// @param _rate Number of tokens issued with 1 ETH. [minimal unit of the token / ETH]
+    /// @param _poolAddr The contract address of DaicoPool.
+    /// @param _tokenAddr The contract address of a ERC20 token.
+    /// @param _openingTime A timestamp of the date this sale will start.
+    /// @param _closingTime A timestamp of the date this sale will end.
+    /// @param _tokensCap Number of tokens to be sold. Can be 0 if it accepts carryover.
+    /// @param _timeLockRate Specified rate of issued tokens will be locked. ex. 50 = 50%
+    /// @param _timeLockEnd A timestamp of the date locked tokens will be released.
+    /// @param _carryover If true, unsold tokens will be carryovered to next sale. 
+    /// @param _minAcceptableWei Minimum contribution.
+    /// @return 
     function TokenSale (
         uint256 _rate, /* The unit of rate is [nano tokens / ETH] in this contract */
         ERC20Interface _token,
@@ -46,12 +62,17 @@ contract TokenSale is FinalizableCrowdsale,
         minAcceptableWei = _minAcceptableWei;
     }
 
+    /// @dev Initialize the sale. If carryoverAmount is given, it added the tokens to be sold.
+    /// @param carryoverAmount
+    /// @return 
     function initialize(uint256 carryoverAmount) external onlyManager {
         require(!isInitialized);
         isInitialized = true;
         tokensCap = tokensCap.add(carryoverAmount);
     }
 
+    /// @dev Finalize the sale. It transfers all the funds it has. Can be repeated.
+    /// @return 
     function finalize() onlyOwner public {
         //require(!isFinalized);
         require(isInitialized);
@@ -63,11 +84,15 @@ contract TokenSale is FinalizableCrowdsale,
         isFinalized = true;
     }
 
+
+    /// @dev Check if the sale can be finalized.
+    /// @return True if closing time has come or tokens are sold out.
     function canFinalize() public constant returns(bool) {
         return (hasClosed() || (isInitialized && tokensCap <= tokensMinted));
     }
 
-
+    /// @dev It transfers all the funds it has.
+    /// @return 
     function finalization() internal {
         if(address(this).balance > 0){
             poolAddr.transfer(address(this).balance);
@@ -78,6 +103,7 @@ contract TokenSale is FinalizableCrowdsale,
      * @dev Overrides delivery by minting tokens upon purchase.
      * @param _beneficiary Token purchaser
      * @param _tokenAmount Number of tokens to be minted
+     * @return
      */
     function _deliverTokens(address _beneficiary, uint256 _tokenAmount) internal {
         //require(tokensMinted.add(_tokenAmount) <= tokensCap);
@@ -100,8 +126,12 @@ contract TokenSale is FinalizableCrowdsale,
         tokensMinted = tokensMinted.add(_tokenAmount);
     }
 
+    /// @dev Overrides _forwardFunds to do nothing. 
+    /// @return
     function _forwardFunds() internal {}
 
+    /// @dev Overrides _preValidatePurchase to check minimam contribution and initialization.
+    /// @return
     function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal {
         super._preValidatePurchase(_beneficiary, _weiAmount);
         require(isInitialized);
