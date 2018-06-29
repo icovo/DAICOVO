@@ -5,9 +5,7 @@ import '../math/SafeMath.sol';
 import '../token/ERC20/ERC20Interface.sol';
 import './Voting.sol';
 
-/// @title DAICO pool manages funds and release them little by little. 
-/// @author ICOVO AG
-/// @dev Receive some signal from Voting contract. Can be destructed by voting results. 
+
 contract DaicoPool is Ownable {
     using SafeMath for uint256;
 
@@ -59,11 +57,6 @@ contract DaicoPool is Ownable {
         _;
     }
 
-    /// @dev Constructor.
-    /// @param _votingTokenAddr The contract address of ERC20 
-    /// @param tap_amount The initai vaue of TAP. [wei/sec]
-    /// @param _initialRelease The amount of wei released when the project starts.
-    /// @return 
     function DaicoPool(address _votingTokenAddr, uint256 tap_amount, uint256 _initialRelease) public {
         require(_votingTokenAddr != 0x0);
 
@@ -75,14 +68,8 @@ contract DaicoPool is Ownable {
         votingAddr = new Voting(ERC20Interface(_votingTokenAddr), address(this));
     }
 
-    /// @dev Fallback function. This contract receives ETH transfers.
-    /// @return 
     function () external payable {}
 
-    /// @dev Set the address of TokenSaleManager.
-    /// @dev This contract only receives starting signal from set TokenSaleManager.
-    /// @param _tokenSaleAddr The contract address of TokenSaleManager 
-    /// @return 
     function setTokenSaleContract(address _tokenSaleAddr) external {
         /* Can be set only once */
         require(tokenSaleAddr == address(0x0));
@@ -90,9 +77,6 @@ contract DaicoPool is Ownable {
         tokenSaleAddr = _tokenSaleAddr;
     }
 
-    /// @dev Start fund release according to TAP. Only TokenSaleManager set this contract
-    /// @dev  can invoke this function.
-    /// @return 
     function startProject() external onlyTokenSaleContract {
         require(status == Status.Initializing);
         status = Status.ProjectInProgress;
@@ -102,9 +86,6 @@ contract DaicoPool is Ownable {
         fundRaised = this.balance;
     }
 
-    /// @dev Owner can withdraw the released fund.
-    /// @param amount Amount to be withdrawn.
-    /// @return 
     function withdraw(uint256 amount) public onlyOwner {
         require(amount > 0);
         updateReleasedBalance();
@@ -119,16 +100,11 @@ contract DaicoPool is Ownable {
         WithdrawalHistory("ETH", amount);
     }
 
-    /// @dev Increse the TAP value. Only Voting contract can invoke this function. 
-    /// @param tapMultiplierRate TAP increase rate. i.e. 150 = 150%
-    /// @return 
     function raiseTap(uint256 tapMultiplierRate) external onlyVoting {
         updateReleasedBalance();
         updateTap(tap.mul(tapMultiplierRate.div(100)));
     }
 
-    /// @dev Destruct this pool and start refunding to token holders. 
-    /// @return 
     function selfDestruction() external onlyVoting {
         status = Status.Destructed;
         updateReleasedBalance();
@@ -139,9 +115,6 @@ contract DaicoPool is Ownable {
         refundRateNano = address(this).balance.sub(getAvailableBalance()).mul(10**9).div(_totalSupply);
     }
 
-    /// @dev If this pool is destructed, token holders can receive refunding with returning tokens.
-    /// @tokenAmount Token amount to be returned. 
-    /// @return 
     function refund(uint256 tokenAmount) external poolDestructed {
         require(ERC20Interface(votingTokenAddr).transferFrom(msg.sender, this, tokenAmount));
 
@@ -150,16 +123,11 @@ contract DaicoPool is Ownable {
         msg.sender.transfer(refundingEther);
     }
 
-    /// @dev Return the total amount of funds that released to the owner so far.
-    /// @dev Withdrawn funds are not excluded.
-    /// @return Amount of released funds. [wei]
     function getReleasedBalance() public constant returns(uint256) {
         uint256 time_elapsed = block.timestamp.sub(lastUpdatedTime);
         return releasedBalance.add(time_elapsed.mul(tap));
     }
  
-    /// @dev Return the amount of funds that owner can withdraw at the time.
-    /// @return Amount of available funds. [wei]
     function getAvailableBalance() public constant returns(uint256) {
         uint256 available_balance = getReleasedBalance() - withdrawnBalance;
 
@@ -170,13 +138,11 @@ contract DaicoPool is Ownable {
         return available_balance;
     }
 
-    /// @dev Update the variable releasedBalance that used internally.
     function updateReleasedBalance() internal {
         releasedBalance = getReleasedBalance();
         lastUpdatedTime = block.timestamp;
     }
 
-    /// @dev Update the TAP amount.
     function updateTap(uint256 new_tap) private {
         tap = new_tap;
         TapHistory(new_tap);

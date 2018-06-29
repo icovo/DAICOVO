@@ -31,8 +31,8 @@ contract TokenSale is FinalizableCrowdsale,
 
     /// @dev Constructor.
     /// @param _rate Number of tokens issued with 1 ETH. [minimal unit of the token / ETH]
+    /// @param _token The contract address of a ERC20 token.
     /// @param _poolAddr The contract address of DaicoPool.
-    /// @param _tokenAddr The contract address of a ERC20 token.
     /// @param _openingTime A timestamp of the date this sale will start.
     /// @param _closingTime A timestamp of the date this sale will end.
     /// @param _tokensCap Number of tokens to be sold. Can be 0 if it accepts carryover.
@@ -63,7 +63,7 @@ contract TokenSale is FinalizableCrowdsale,
     }
 
     /// @dev Initialize the sale. If carryoverAmount is given, it added the tokens to be sold.
-    /// @param carryoverAmount
+    /// @param carryoverAmount Amount of tokens to be added to capTokens.
     /// @return 
     function initialize(uint256 carryoverAmount) external onlyManager {
         require(!isInitialized);
@@ -84,12 +84,12 @@ contract TokenSale is FinalizableCrowdsale,
         isFinalized = true;
     }
 
-
     /// @dev Check if the sale can be finalized.
     /// @return True if closing time has come or tokens are sold out.
     function canFinalize() public constant returns(bool) {
         return (hasClosed() || (isInitialized && tokensCap <= tokensMinted));
     }
+
 
     /// @dev It transfers all the funds it has.
     /// @return 
@@ -103,7 +103,6 @@ contract TokenSale is FinalizableCrowdsale,
      * @dev Overrides delivery by minting tokens upon purchase.
      * @param _beneficiary Token purchaser
      * @param _tokenAmount Number of tokens to be minted
-     * @return
      */
     function _deliverTokens(address _beneficiary, uint256 _tokenAmount) internal {
         //require(tokensMinted.add(_tokenAmount) <= tokensCap);
@@ -127,11 +126,11 @@ contract TokenSale is FinalizableCrowdsale,
     }
 
     /// @dev Overrides _forwardFunds to do nothing. 
-    /// @return
     function _forwardFunds() internal {}
 
     /// @dev Overrides _preValidatePurchase to check minimam contribution and initialization.
-    /// @return
+    /// @param _beneficiary Token purchaser
+    /// @param _weiAmount weiAmount to pay
     function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal {
         super._preValidatePurchase(_beneficiary, _weiAmount);
         require(isInitialized);

@@ -39,7 +39,6 @@ contract TokenSaleManager is Ownable {
     /// @param _timeLockPoolAddr The contract address of a TimeLockPool.
     /// @param _daicoPoolAddr The contract address of DaicoPool.
     /// @param _token The contract address of a ERC20 token.
-    /// @return
     function TokenSaleManager (
         address _tokenControllerAddr,
         address _timeLockPoolAddr,
@@ -61,7 +60,6 @@ contract TokenSaleManager is Ownable {
     }
 
     /// @dev This contract doen't receive any ETH.
-    /// @return
     function() external payable {
         revert();
     }
@@ -76,7 +74,6 @@ contract TokenSaleManager is Ownable {
     /// @param timeLockRate Specified rate of issued tokens will be locked. ex. 50 = 50%
     /// @param timeLockEnd A timestamp of the date locked tokens will be released.
     /// @param minAcceptableWei Minimum contribution.
-    /// @return
     function addTokenSale (
         uint256 openingTime,
         uint256 closingTime,
@@ -157,7 +154,6 @@ contract TokenSaleManager is Ownable {
 
     /// @dev Adds single address to whitelist of all token sales.
     /// @param _beneficiary Address to be added to the whitelist
-    /// @return 
     function addToWhitelist(address _beneficiary) external onlyOwner {
         require(isStarted);
         for (uint256 i = 0; i < tokenSales.length; i++ ) {
@@ -166,8 +162,7 @@ contract TokenSaleManager is Ownable {
     }
 
     /// @dev Adds multiple addresses to whitelist of all token sales.
-    /// @param _beneficiary Address to be added to the whitelist
-    /// @return 
+    /// @param _beneficiaries Addresses to be added to the whitelist
     function addManyToWhitelist(address[] _beneficiaries) external onlyOwner {
         require(isStarted);
         for (uint256 i = 0; i < tokenSales.length; i++ ) {
@@ -175,10 +170,10 @@ contract TokenSaleManager is Ownable {
         }
     }
 
+
     /// @dev Finalize the specific token sale. Can be done if end date has come or 
     /// @dev all tokens has been sold out. It process carryover if it is set.
     /// @param _indexTokenSale index of the target token sale. 
-    /// @return 
     function finalize (uint256 _indexTokenSale) external {
         require(isStarted && !isFinalized);
         TokenSale ts = TokenSale(tokenSales[_indexTokenSale]);
@@ -200,7 +195,6 @@ contract TokenSaleManager is Ownable {
 
     /// @dev Finalize the manager. Can be done if all token sales are already finalized.
     /// @dev It makes the DaicoPool open the TAP.
-    /// @return 
     function finalizeTokenSaleManager () external{
         require(isStarted && !isFinalized);
         for (uint256 i = 0; i < tokenSales.length; i++ ) {
