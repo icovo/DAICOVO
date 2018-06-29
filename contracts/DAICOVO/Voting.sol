@@ -166,7 +166,7 @@ contract Voting{
         uint256 ayes = getAyes(pid);
         uint256 nays = getNays(pid);
         uint256 absent = ERC20Interface(votingTokenAddr).totalSupply().sub(ayes).sub(nays);
-        return (ayes.sub(nays).add(absent.div(6)) > 0);
+        return (ayes > nays.add(absent.div(6)));
     }
 
     /// @dev Check if a voting has started or not.
