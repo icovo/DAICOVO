@@ -102,7 +102,7 @@ contract DaicoPool is Ownable {
 
     function raiseTap(uint256 tapMultiplierRate) external onlyVoting {
         updateReleasedBalance();
-        updateTap(tap.mul(tapMultiplierRate.div(100)));
+        updateTap(tap.mul(tapMultiplierRate).div(100));
     }
 
     function selfDestruction() external onlyVoting {
