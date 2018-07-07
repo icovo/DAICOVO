@@ -135,7 +135,7 @@ contract Voting{
            return false;
         }
 
-        return ERC20Interface(votingTokenAddr).transfer(msg.sender, amount);
+        return ERC20Interface(votingTokenAddr).transfer(account, amount);
     }
 
     /// @dev Return tokens to multiple addresses.
