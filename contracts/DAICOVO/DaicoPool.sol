@@ -129,7 +129,7 @@ contract DaicoPool is Ownable {
     }
  
     function getAvailableBalance() public constant returns(uint256) {
-        uint256 available_balance = getReleasedBalance() - withdrawnBalance;
+        uint256 available_balance = getReleasedBalance().sub(withdrawnBalance);
 
         if (available_balance > address(this).balance) {
             available_balance = address(this).balance;
