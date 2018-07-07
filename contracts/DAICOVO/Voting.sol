@@ -254,6 +254,10 @@ contract Voting{
         Proposal memory proposal;
         proposal.subject = _subject;
         proposal.reason = _reason;
+        proposal.start_time = block.timestamp;
+        proposal.end_time = block.timestamp + VOTING_PERIOD;
+        proposal.voter_count = 0;
+        proposal.isFinalized = false;
 
         uint256 newID = proposals.length;
         proposals[newID] = proposal;
