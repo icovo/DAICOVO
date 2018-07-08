@@ -125,8 +125,9 @@ contract Voting{
     /// @return 
     function returnToken (address account) external returns(bool) {
         uint256 amount = 0;
+        uint256 currentVoting = this.getCurrentVoting();
     
-        for (uint256 pid = 0; pid < this.getCurrentVoting(); pid++) {
+        for (uint256 pid = 0; pid < currentVoting; pid++) {
             amount = amount.add(deposits[pid][account]);
             deposits[pid][account] = 0;
         }
