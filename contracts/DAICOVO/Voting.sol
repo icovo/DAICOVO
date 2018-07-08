@@ -47,6 +47,7 @@ contract Voting{
         address _poolAddr
     ) public {
         require(_votingTokenAddr != address(0x0));
+        require(_poolAddr != address(0x0));
         votingTokenAddr = _votingTokenAddr;
         poolAddr = _poolAddr;
     }
