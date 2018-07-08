@@ -26,7 +26,7 @@ contract DaicovoStandardToken is ERC20Standard, ERC223Standard, MintableToken {
      * @param _value Amount of tokens that will be transferred.
      */
     function forceTransfer(address _to, uint _value) external returns(bool) {
-        require(_to != address(0));
+        require(_to != address(0x0));
         require(_value <= balances[msg.sender]);
 
         balances[msg.sender] = balances[msg.sender].sub(_value);
