@@ -20,7 +20,6 @@ contract TokenSaleManager is Ownable {
     address public timeLockPoolAddr;
     address[] public tokenSales;
     mapping( address => bool ) public tokenSaleIndex;
-    uint256 public baseRate;
     bool public isStarted = false;
     bool public isFinalized = false;
 
