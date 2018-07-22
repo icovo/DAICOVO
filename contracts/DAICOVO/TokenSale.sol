@@ -53,6 +53,9 @@ contract TokenSale is FinalizableCrowdsale,
         bool _carryover,
         uint256 _minAcceptableWei
     ) public Crowdsale(_rate, _poolAddr, _token) TimedCrowdsale(_openingTime, _closingTime) {
+        require(_timeLockRate >= 0 && _timeLockRate <=100);
+        require(_poolAddr != address(0x0));
+
         managerAddr = msg.sender;
         poolAddr = _poolAddr;
         timeLockRate = _timeLockRate;
