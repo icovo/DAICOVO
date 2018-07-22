@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.24;
 
 import '../token/ERC20/ERC20Interface.sol';
 import '../math/SafeMath.sol';
@@ -36,7 +36,7 @@ contract TimeLockPool{
 
     /// @dev Constructor. 
     /// @return 
-    function TimeLockPool() public {}
+    constructor() public {}
 
     /// @dev Deposit tokens to specific account with time-lock.
     /// @param tokenAddr The contract address of a ERC20/ERC223 token.
@@ -57,7 +57,7 @@ contract TimeLockPool{
         require(ERC20Interface(tokenAddr).transferFrom(msg.sender, this, amount));
 
         lockedBalances[account][tokenAddr].push(LockedBalance(amount, releaseTime));
-        Deposit(account, tokenAddr, amount, releaseTime);
+        emit Deposit(account, tokenAddr, amount, releaseTime);
 
         return true;
     }
@@ -76,7 +76,7 @@ contract TimeLockPool{
         require(amount > 0);
 
         lockedBalances[account][tokenAddr].push(LockedBalance(amount, releaseTime));
-        Deposit(account, tokenAddr, amount, releaseTime);
+        emit Deposit(account, tokenAddr, amount, releaseTime);
 
         return true;
     }
@@ -100,7 +100,7 @@ contract TimeLockPool{
 
         require(release_amount > 0);
 
-        Withdraw(account, tokenAddr, release_amount);
+        emit Withdraw(account, tokenAddr, release_amount);
 
         if (tokenAddr == 0x0) {
             if (!account.send(release_amount)) {

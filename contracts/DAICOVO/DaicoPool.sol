@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.24;
 
 import '../ownership/Ownable.sol';
 import '../math/SafeMath.sol';
@@ -57,7 +57,7 @@ contract DaicoPool is Ownable {
         _;
     }
 
-    function DaicoPool(address _votingTokenAddr, uint256 tap_amount, uint256 _initialRelease) public {
+    constructor(address _votingTokenAddr, uint256 tap_amount, uint256 _initialRelease) public {
         require(_votingTokenAddr != 0x0);
 
         initialTap = tap_amount;
@@ -83,7 +83,7 @@ contract DaicoPool is Ownable {
         lastUpdatedTime = block.timestamp;
         releasedBalance = initialRelease;
         updateTap(initialTap);
-        fundRaised = this.balance;
+        fundRaised = address(this).balance;
     }
 
     function withdraw(uint256 amount) public onlyOwner {
@@ -97,7 +97,7 @@ contract DaicoPool is Ownable {
         withdrawnBalance = withdrawnBalance.add(amount);
         owner.transfer(amount);
 
-        WithdrawalHistory("ETH", amount);
+        emit WithdrawalHistory("ETH", amount);
     }
 
     function raiseTap(uint256 tapMultiplierRate) external onlyVoting {
@@ -119,7 +119,7 @@ contract DaicoPool is Ownable {
         require(ERC20Interface(votingTokenAddr).transferFrom(msg.sender, this, tokenAmount));
 
         uint256 refundingEther = tokenAmount.mul(refundRateNano).div(10**9);
-        Refund(msg.sender, tokenAmount);
+        emit Refund(msg.sender, tokenAmount);
         msg.sender.transfer(refundingEther);
     }
 
@@ -145,6 +145,6 @@ contract DaicoPool is Ownable {
 
     function updateTap(uint256 new_tap) private {
         tap = new_tap;
-        TapHistory(new_tap);
+        emit TapHistory(new_tap);
     }
 }

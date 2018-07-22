@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.24;
 
 import "../token/ERC20/ERC20Interface.sol";
 import "../math/SafeMath.sol";
@@ -41,7 +41,7 @@ contract TokenSale is FinalizableCrowdsale,
     /// @param _carryover If true, unsold tokens will be carryovered to next sale. 
     /// @param _minAcceptableWei Minimum contribution.
     /// @return 
-    function TokenSale (
+    constructor (
         uint256 _rate, /* The unit of rate is [nano tokens / ETH] in this contract */
         ERC20Interface _token,
         address _poolAddr,
@@ -82,7 +82,7 @@ contract TokenSale is FinalizableCrowdsale,
         require(canFinalize());
 
         finalization();
-        Finalized();
+        emit Finalized();
 
         isFinalized = true;
     }

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 import "../token/ERC20/ERC20Standard.sol";
 import "../token/ERC223/ERC223Interface.sol";
@@ -13,7 +13,7 @@ import "../token/extentions/MintableToken.sol";
  */
 contract DaicovoStandardToken is ERC20Standard, ERC223Standard, MintableToken {
 
-    function DaicovoStandardToken(string _name, string _symbol, uint8 _decimals) public {
+    constructor(string _name, string _symbol, uint8 _decimals) public {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
@@ -31,7 +31,7 @@ contract DaicovoStandardToken is ERC20Standard, ERC223Standard, MintableToken {
 
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
-        Transfer(msg.sender, _to, _value);
+        emit Transfer(msg.sender, _to, _value);
         return true;
     }
 }
