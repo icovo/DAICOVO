@@ -13,8 +13,8 @@ contract Voting{
 
     address public votingTokenAddr;
     address public poolAddr;
-    mapping (uint256 => mapping(address => uint256)) deposits;
-    mapping (uint => bool) queued;
+    mapping (uint256 => mapping(address => uint256)) public deposits;
+    mapping (uint => bool) public queued;
 
     uint256 proposalCostWei = 1 * 10**18;
 

@@ -19,7 +19,7 @@ contract TimeLockPool{
       structure: lockedBalnces[owner][token] = LockedBalance(balance, releaseTime);
       token address = '0x0' stands for ETH (unit = wei)
     */
-    mapping (address => mapping (address => LockedBalance[])) lockedBalances;
+    mapping (address => mapping (address => LockedBalance[])) public lockedBalances;
 
     event Deposit(
         address indexed owner,
