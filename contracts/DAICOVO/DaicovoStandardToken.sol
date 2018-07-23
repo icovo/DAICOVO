@@ -12,6 +12,9 @@ import "../token/extentions/MintableToken.sol";
  * @dev with exisiting apps which expects ERC20 token's transfer function berhavior.
  */
 contract DaicovoStandardToken is ERC20Standard, ERC223Standard, MintableToken {
+    string public name;
+    string public symbol;
+    uint8 public decimals;
 
     constructor(string _name, string _symbol, uint8 _decimals) public {
         name = _name;

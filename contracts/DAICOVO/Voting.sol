@@ -75,7 +75,7 @@ contract Voting{
     function addDestructionProposal (string _reason) external payable returns(uint256) {
         require(!queued[uint(Subject.Destruction)]);
 
-        uint256 newID = addProposal(Subject.Destruction, _reason);
+        addProposal(Subject.Destruction, _reason);
 
         queued[uint(Subject.Destruction)] = true;
     }

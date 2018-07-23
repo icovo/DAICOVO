@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 /**
  * Released under the MIT license.
@@ -43,7 +43,7 @@ contract ERC223Standard is ERC223Interface, ERC20Standard {
             ERC223ReceivingContract receiver = ERC223ReceivingContract(_to);
             receiver.tokenFallback(msg.sender, _value, _data);
         }
-        Transfer(msg.sender, _to, _value);
+        emit Transfer(msg.sender, _to, _value);
     }
     
     /**
@@ -70,7 +70,7 @@ contract ERC223Standard is ERC223Interface, ERC20Standard {
             ERC223ReceivingContract receiver = ERC223ReceivingContract(_to);
             receiver.tokenFallback(msg.sender, _value, empty);
         }
-        Transfer(msg.sender, _to, _value);
+        emit Transfer(msg.sender, _to, _value);
         return true;
     }
  
