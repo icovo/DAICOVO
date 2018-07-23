@@ -66,9 +66,9 @@ contract TokenController is Ownable {
     /// @return True if the change of the phase is successful, revert otherwise.
     function openTokensale (address _tokensaleManagerAddr)
         external
+        onlyOwner
         returns (bool)
     {
-        require(msg.sender == owner);
         /* check if the owner of the target token is set to this contract */
         require(MintableToken(targetToken).owner() == address(this));
         require(state == State.Init);
