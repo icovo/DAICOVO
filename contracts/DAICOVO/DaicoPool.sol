@@ -85,8 +85,10 @@ contract DaicoPool is Ownable {
         fundRaised = address(this).balance;
     }
 
-    function withdraw(uint256 amount) public onlyOwner {
-        require(amount > 0);
+    function withdraw(uint256 _amount) public onlyOwner {
+        require(_amount > 0);
+        uint256 amount = _amount;
+
         updateReleasedBalance();
         uint256 available_balance = getAvailableBalance();
         if (amount > available_balance) {
