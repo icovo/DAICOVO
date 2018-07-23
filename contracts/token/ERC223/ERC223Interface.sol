@@ -7,7 +7,7 @@ pragma solidity ^0.4.24;
 
 contract ERC223Interface {
     function totalSupply() external view returns (uint256);
-    function balanceOf(address who) external constant returns (uint256);
+    function balanceOf(address who) external view returns (uint256);
     function transfer(address to, uint256 value) external returns (bool);
     function transfer(address to, uint256 value, bytes data) external returns (bool);
     event Transfer(address indexed from, address indexed to, uint256 value);

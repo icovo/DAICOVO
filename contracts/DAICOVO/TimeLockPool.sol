@@ -121,7 +121,7 @@ contract TimeLockPool{
     /// @return Available balance of specified token.
     function getAvailableBalanceOf (address account, address tokenAddr) 
         external
-        constant
+        view
         returns (uint256)
     {
         require(account != address(0x0));
@@ -141,7 +141,7 @@ contract TimeLockPool{
     /// @return Locked balance of specified token.
     function getLockedBalanceOf (address account, address tokenAddr)
         external
-        constant
+        view
         returns (uint256) 
     {
         require(account != address(0x0));
@@ -161,7 +161,7 @@ contract TimeLockPool{
     /// @return Timestamp of next release.
     function getNextReleaseTimeOf (address account, address tokenAddr)
         external
-        constant
+        view
         returns (uint256) 
     {
         require(account != address(0x0));

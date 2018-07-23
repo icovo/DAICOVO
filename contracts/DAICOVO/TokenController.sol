@@ -92,19 +92,19 @@ contract TokenController is Ownable {
 
     /// @dev Check if the state is "Init" or not.
     /// @return True if the state is "Init", false otherwise.
-    function isStateInit () external constant returns (bool) {
+    function isStateInit () external view returns (bool) {
         return (state == State.Init);
     }
 
     /// @dev Check if the state is "Tokensale" or not.
     /// @return True if the state is "Tokensale", false otherwise.
-    function isStateTokensale () external constant returns (bool) {
+    function isStateTokensale () external view returns (bool) {
         return (state == State.Tokensale);
     }
 
     /// @dev Check if the state is "Public" or not.
     /// @return True if the state is "Public", false otherwise.
-    function isStatePublic () external constant returns (bool) {
+    function isStatePublic () external view returns (bool) {
         return (state == State.Public);
     }
 }

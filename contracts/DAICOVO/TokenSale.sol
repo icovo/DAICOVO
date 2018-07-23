@@ -89,7 +89,7 @@ contract TokenSale is FinalizableCrowdsale,
 
     /// @dev Check if the sale can be finalized.
     /// @return True if closing time has come or tokens are sold out.
-    function canFinalize() public constant returns(bool) {
+    function canFinalize() public view returns(bool) {
         return (hasClosed() || (isInitialized && tokensCap <= tokensMinted));
     }
 

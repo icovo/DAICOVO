@@ -125,12 +125,12 @@ contract DaicoPool is Ownable {
         msg.sender.transfer(refundingEther);
     }
 
-    function getReleasedBalance() public constant returns(uint256) {
+    function getReleasedBalance() public view returns(uint256) {
         uint256 time_elapsed = block.timestamp.sub(lastUpdatedTime);
         return releasedBalance.add(time_elapsed.mul(tap));
     }
  
-    function getAvailableBalance() public constant returns(uint256) {
+    function getAvailableBalance() public view returns(uint256) {
         uint256 available_balance = getReleasedBalance().sub(withdrawnBalance);
 
         if (available_balance > address(this).balance) {

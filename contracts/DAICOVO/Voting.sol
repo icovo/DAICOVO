@@ -151,7 +151,7 @@ contract Voting{
 
     /// @dev Return the index of on going voting.
     /// @return The index of voting. 
-    function getCurrentVoting () public constant returns(uint256) {
+    function getCurrentVoting () public view returns(uint256) {
         for (uint256 i = 0; i < proposals.length; i++) {
             if (!proposals[i].isFinalized) {
                 return i;
@@ -163,7 +163,7 @@ contract Voting{
     /// @dev Check if a proposal has been agreed or not.
     /// @param pid Index of a proposal.
     /// @return True if the proposal passed. False otherwise. 
-    function isPassed (uint256 pid) public constant returns(bool) {
+    function isPassed (uint256 pid) public view returns(bool) {
         require(proposals[pid].isFinalized);
         uint256 ayes = getAyes(pid);
         uint256 nays = getNays(pid);
@@ -174,7 +174,7 @@ contract Voting{
     /// @dev Check if a voting has started or not.
     /// @param pid Index of a proposal.
     /// @return True if the voting already started. False otherwise. 
-    function isStarted (uint256 pid) public constant returns(bool) {
+    function isStarted (uint256 pid) public view returns(bool) {
         if (pid > getCurrentVoting()) {
             return false;
         } else if (block.timestamp >= proposals[pid].start_time) {
@@ -186,7 +186,7 @@ contract Voting{
     /// @dev Check if a voting has ended or not.
     /// @param pid Index of a proposal.
     /// @return True if the voting already ended. False otherwise. 
-    function isEnded (uint256 pid) public constant returns(bool) {
+    function isEnded (uint256 pid) public view returns(bool) {
         if (pid > getCurrentVoting()) {
             return false;
         } else if (block.timestamp >= proposals[pid].end_time) {
@@ -198,7 +198,7 @@ contract Voting{
     /// @dev Return the reason of a proposal.
     /// @param pid Index of a proposal.
     /// @return Text of the reason that is set when the proposal made. 
-    function getReason (uint256 pid) external constant returns(string) {
+    function getReason (uint256 pid) external view returns(string) {
         require(pid <= getCurrentVoting());
         return proposals[pid].reason;
     }
@@ -206,7 +206,7 @@ contract Voting{
     /// @dev Check if a proposal is about TAP raising or not.
     /// @param pid Index of a proposal.
     /// @return True if it's TAP raising. False otherwise.
-    function isSubjectRaiseTap (uint256 pid) public constant returns(bool) {
+    function isSubjectRaiseTap (uint256 pid) public view returns(bool) {
         require(pid <= getCurrentVoting());
         return proposals[pid].subject == Subject.RaiseTap;
     }
@@ -214,7 +214,7 @@ contract Voting{
     /// @dev Check if a proposal is about self destruction or not.
     /// @param pid Index of a proposal.
     /// @return True if it's self destruction. False otherwise.
-    function isSubjectDestruction (uint256 pid) public constant returns(bool) {
+    function isSubjectDestruction (uint256 pid) public view returns(bool) {
         require(pid <= getCurrentVoting());
         return proposals[pid].subject == Subject.Destruction;
     }
@@ -222,7 +222,7 @@ contract Voting{
     /// @dev Return the number of voters take part in a specific voting.
     /// @param pid Index of a proposal.
     /// @return The number of voters.
-    function getVoterCount (uint256 pid) external constant returns(uint256) {
+    function getVoterCount (uint256 pid) external view returns(uint256) {
         require(pid <= getCurrentVoting());
         return proposals[pid].voter_count;
     }
@@ -230,7 +230,7 @@ contract Voting{
     /// @dev Return the number of votes that agrees the proposal.
     /// @param pid Index of a proposal.
     /// @return The number of votes that agrees the proposal.
-    function getAyes (uint256 pid) public constant returns(uint256) {
+    function getAyes (uint256 pid) public view returns(uint256) {
         require(pid <= getCurrentVoting());
         require(proposals[pid].isFinalized);
         return proposals[pid].votes[true];
@@ -239,7 +239,7 @@ contract Voting{
     /// @dev Return the number of votes that disagrees the proposal.
     /// @param pid Index of a proposal.
     /// @return The number of votes that disagrees the proposal.
-    function getNays (uint256 pid) public constant returns(uint256) {
+    function getNays (uint256 pid) public view returns(uint256) {
         require(pid <= getCurrentVoting());
         require(proposals[pid].isFinalized);
         return proposals[pid].votes[false];
