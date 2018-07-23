@@ -9,10 +9,10 @@ pragma solidity ^0.4.21;
  */
 contract WhitepaperVersioning {
     mapping (string => Whitepaper) private whitepapers;
-    event Post(string indexed ipfsHash, uint8 version, address indexed author);
+    event Post(string indexed ipfsHash, uint256 version, address indexed author);
 
     struct Whitepaper {
-        uint8 version;
+        uint256 version;
         address author;
         string prev;
         string next;
@@ -32,7 +32,10 @@ contract WhitepaperVersioning {
      * @param _prev IPFS hash of the previous version whitepaper (if initial version, set "HEAD")
      * @return status bool
      */
-    function post (string _ipfsHash, uint8 _version, string _prev) public returns (bool) {
+    function post (string _ipfsHash, uint256 _version, string _prev) public returns (bool) {
+        // HEAD is reserved word, and cannot set as ipfsHash
+        require(keccak256(_ipfsHash) != keccak256("HEAD"));
+        
         // Check if the IPFS hash doesn't exist already.
         require(!whitepapers[_ipfsHash].initialized);
 
@@ -63,7 +66,7 @@ contract WhitepaperVersioning {
      */
     function get (string _ipfsHash) public view returns (
         string ipfsHash,
-        uint8 version,
+        uint256 version,
         address author,
         string prev,
         string next
