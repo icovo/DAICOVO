@@ -19,7 +19,6 @@ contract DaicoPool is Ownable {
     uint256 public withdrawnBalance;
     uint256 public lastUpdatedTime;
     uint256 public fundRaised;
-    mapping (address => uint256) deposits;
     uint256 public closingRelease = 30 days;
 
     /* The unit of this variable is [10^-9 wei / token], intending to minimize rouding errors */
