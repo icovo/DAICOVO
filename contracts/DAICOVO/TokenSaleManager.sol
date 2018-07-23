@@ -14,7 +14,7 @@ import "../math/SafeMath.sol";
 contract TokenSaleManager is Ownable {
     using SafeMath for uint256;
 
-    ERC20Interface token;
+    ERC20Interface public token;
     address public poolAddr;
     address public tokenControllerAddr;
     address public timeLockPoolAddr;
