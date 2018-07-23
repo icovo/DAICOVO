@@ -58,6 +58,7 @@ contract DaicoPool is Ownable {
 
     constructor(address _votingTokenAddr, uint256 tap_amount, uint256 _initialRelease) public {
         require(_votingTokenAddr != 0x0);
+        require(tap_amount > 0);
 
         initialTap = tap_amount;
         votingTokenAddr = _votingTokenAddr;
