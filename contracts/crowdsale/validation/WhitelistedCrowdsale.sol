@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 /**
  * Copyright (c) 2016 Smart Contract Solutions, Inc.

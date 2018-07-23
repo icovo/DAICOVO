@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 /**
  * Copyright (c) 2016 Smart Contract Solutions, Inc.
@@ -11,10 +11,6 @@ pragma solidity ^0.4.18;
  * @dev 
  */
 contract ERC20Interface {
-  string public name;
-  string public symbol;
-  uint8 public decimals;
-
   function totalSupply() external view returns (uint256);
   function balanceOf(address who) external view returns (uint256);
   function transfer(address to, uint256 value) external returns (bool);

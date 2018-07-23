@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 import "./DaicovoStandardToken.sol";
 
@@ -10,7 +10,7 @@ import "./DaicovoStandardToken.sol";
  */
 contract OVOToken is DaicovoStandardToken {
     string public icon;
-    function OVOToken () public DaicovoStandardToken("ICOVO", "OVO", 9) {
+    constructor () public DaicovoStandardToken("ICOVO", "OVO", 9) {
         icon = "QmXMDG2UnMQ7rFqxRN2LVA3ad2FLNTarDXZijdrctt8vpo";
     }
 }

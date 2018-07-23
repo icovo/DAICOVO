@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 /**
  * Copyright (c) 2016 Smart Contract Solutions, Inc.
@@ -32,7 +32,7 @@ contract FinalizableCrowdsale is TimedCrowdsale, Ownable {
     require(hasClosed());
 
     finalization();
-    Finalized();
+    emit Finalized();
 
     isFinalized = true;
   }

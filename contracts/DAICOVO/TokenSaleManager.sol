@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 import "./TokenController.sol";
 import "./TokenSale.sol";
@@ -38,7 +38,7 @@ contract TokenSaleManager is Ownable {
     /// @param _timeLockPoolAddr The contract address of a TimeLockPool.
     /// @param _daicoPoolAddr The contract address of DaicoPool.
     /// @param _token The contract address of a ERC20 token.
-    function TokenSaleManager (
+    constructor (
         address _tokenControllerAddr,
         address _timeLockPoolAddr,
         address _daicoPoolAddr,

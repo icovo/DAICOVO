@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.24;
 
 import './TimeLockPool.sol';
 import '../token/extentions/MintableToken.sol';
@@ -36,7 +36,7 @@ contract TokenController is Ownable {
     /// @dev The deployer must change the ownership of the target token to this contract.
     /// @param _targetToken : The target token this contract manage the rights to mint.
     /// @return 
-    function TokenController (
+    constructor (
         MintableToken _targetToken
     ) public {
         targetToken = MintableToken(_targetToken);

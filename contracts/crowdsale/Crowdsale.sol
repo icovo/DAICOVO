@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 /**
  * Copyright (c) 2016 Smart Contract Solutions, Inc.
@@ -51,7 +51,7 @@ contract Crowdsale {
    * @param _wallet Address where collected funds will be forwarded to
    * @param _token Address of the token being sold
    */
-  function Crowdsale(uint256 _rate, address _wallet, ERC20Interface _token) public {
+  constructor(uint256 _rate, address _wallet, ERC20Interface _token) public {
     require(_rate > 0);
     require(_wallet != address(0));
     require(_token != address(0));
@@ -88,7 +88,7 @@ contract Crowdsale {
     weiRaised = weiRaised.add(weiAmount);
 
     _processPurchase(_beneficiary, tokens);
-    TokenPurchase(msg.sender, _beneficiary, weiAmount, tokens);
+    emit TokenPurchase(msg.sender, _beneficiary, weiAmount, tokens);
 
     _updatePurchasingState(_beneficiary, weiAmount);
 

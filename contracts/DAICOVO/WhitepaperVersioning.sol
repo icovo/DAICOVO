@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.24;
 
 /**
  * @title WhitepaperVersioning
@@ -23,7 +23,7 @@ contract WhitepaperVersioning {
      * @dev Constructor
      * @dev Doing nothing.
      */
-    function WhitepaperVersioning () public {}
+    constructor () public {}
 
     /**
      * @dev Function to post a new whitepaper

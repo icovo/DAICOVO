@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 /**
  * Copyright (c) 2016 Smart Contract Solutions, Inc.
@@ -33,7 +33,7 @@ contract TimedCrowdsale is Crowdsale {
    * @param _openingTime Crowdsale opening time
    * @param _closingTime Crowdsale closing time
    */
-  function TimedCrowdsale(uint256 _openingTime, uint256 _closingTime) public {
+  constructor(uint256 _openingTime, uint256 _closingTime) public {
     require(_openingTime >= block.timestamp);
     require(_closingTime >= _openingTime);
 
