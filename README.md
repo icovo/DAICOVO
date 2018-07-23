@@ -30,13 +30,12 @@ npm install
 ```
 
 ## How it works
-Will be updated.
+[English](https://medium.com/icovo/explanation-of-daicovo-56cf9d27d906)
 
-## Usage
-Will be updated.
+[Japanese](https://medium.com/icovo/daicovo%E8%A9%B3%E7%B4%B0%E8%A7%A3%E8%AA%AC-a610f69c5c1b)
 
 ## Licence
-TBD
+Code released under the [MIT License](https://github.com/icovo/DAICOVO/blob/master/LICENSE).
 
 ## Author
 [ICOVO AG](https://icovo.co/)
