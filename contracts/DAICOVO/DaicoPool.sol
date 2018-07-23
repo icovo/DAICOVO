@@ -1,9 +1,9 @@
 pragma solidity ^0.4.24;
 
-import '../ownership/Ownable.sol';
-import '../math/SafeMath.sol';
-import '../token/ERC20/ERC20Interface.sol';
-import './Voting.sol';
+import "../ownership/Ownable.sol";
+import "../math/SafeMath.sol";
+import "../token/ERC20/ERC20Interface.sol";
+import "./Voting.sol";
 
 
 contract DaicoPool is Ownable {

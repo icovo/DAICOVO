@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
-import '../token/ERC20/ERC20Interface.sol';
-import '../math/SafeMath.sol';
+import "../token/ERC20/ERC20Interface.sol";
+import "../math/SafeMath.sol";
 
 
 /// @title A token-pool that locks deposited tokens until their date of maturity.

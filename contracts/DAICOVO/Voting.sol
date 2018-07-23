@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 
-import '../token/ERC20/ERC20Interface.sol';
-import '../math/SafeMath.sol';
-import './DaicoPool.sol';
+import "../token/ERC20/ERC20Interface.sol";
+import "../math/SafeMath.sol";
+import "./DaicoPool.sol";
 
 
 /// @title Voting contract connected to a DaicoPool. Token holders can make proposals and vote them.
