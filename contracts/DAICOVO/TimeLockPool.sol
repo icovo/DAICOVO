@@ -100,17 +100,17 @@ contract TimeLockPool{
 
         require(release_amount > 0);
 
-        emit Withdraw(account, tokenAddr, release_amount);
-
         if (tokenAddr == 0x0) {
             if (!account.send(release_amount)) {
                 revert();
             }
+            emit Withdraw(account, tokenAddr, release_amount);
             return true;
         } else {
             if (!ERC20Interface(tokenAddr).transfer(account, release_amount)) {
                 revert();
             }
+            emit Withdraw(account, tokenAddr, release_amount);
             return true;
         }
     }
