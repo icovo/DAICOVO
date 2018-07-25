@@ -32,7 +32,7 @@ contract('TimeLockPool test', async (accounts) => {
     let tlp = await TimeLockPool.deployed();
 
     try{
-       await tlp.withdraw(investor2, token.address, {from:investor2});
+       await tlp.withdraw(investor2, token.address, 100, {from:investor2});
        assert(false);
     }catch(error){
         assert(error);
@@ -100,7 +100,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     let balanceBefore = parseInt(await token.balanceOf(investor3));
 
-    assert( await tlp.withdraw(investor3, token.address, {from: investor3}) != 0x0);
+    assert( await tlp.withdraw(investor3, token.address, 5, {from: investor3}) != 0x0);
 
     let returned2 = await tlp.getAvailableBalanceOf(investor3, token.address);
     let expected2 = 0;
@@ -127,7 +127,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     let balanceBefore = parseFloat(web3.fromWei(await web3.eth.getBalance(investor3),'ether'));
 
-    assert( await tlp.withdraw(investor3, '0x0', {from: founder}) != 0x0);
+    assert( await tlp.withdraw(investor3, '0x0', 5, {from: founder}) != 0x0);
 
     let returned2 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0')));
     let expected2 = 0;
