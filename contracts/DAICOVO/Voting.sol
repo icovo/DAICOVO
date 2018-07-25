@@ -38,6 +38,21 @@ contract Voting{
         Destruction
     }
 
+    event Vote(
+        address indexed voter,
+        uint256 amount
+    );
+
+    event ReturnDeposit(
+        address indexed voter,
+        uint256 amount
+    );
+
+    event ProposalRaised(
+        address indexed proposer,
+        string subject 
+    );
+
     /// @dev Constructor.
     /// @param _votingTokenAddr The contract address of ERC20 
     /// @param _poolAddr The contract address of DaicoPool
@@ -67,6 +82,7 @@ contract Voting{
         proposals[newID].tapMultiplierRate = _tapMultiplierRate;
 
         queued[uint(Subject.RaiseTap)] = true;
+        emit ProposalRaised(msg.sender, "RaiseTap");
     }
 
     /// @dev Make a self destruction proposal. It costs certain amount of ETH.
@@ -78,6 +94,7 @@ contract Voting{
         addProposal(Subject.Destruction, _reason);
 
         queued[uint(Subject.Destruction)] = true;
+        emit ProposalRaised(msg.sender, "SelfDestruction");
     }
 
     /// @dev Vote yes or no to current proposal.
@@ -96,6 +113,7 @@ contract Voting{
 
         deposits[pid][msg.sender] = deposits[pid][msg.sender].add(amount);
         proposals[pid].votes[agree] = proposals[pid].votes[agree].add(amount);
+        emit Vote(msg.sender, amount);
     }
 
     /// @dev Finalize the current voting. It can be invoked when the end time past.
@@ -137,7 +155,10 @@ contract Voting{
            return false;
         }
 
-        return ERC20Interface(votingTokenAddr).transfer(account, amount);
+        require(ERC20Interface(votingTokenAddr).transfer(account, amount));
+        ReturnDeposit(account, amount);
+ 
+        return true;
     }
 
     /// @dev Return tokens to multiple addresses.
