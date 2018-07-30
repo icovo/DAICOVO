@@ -1,22 +1,22 @@
 pragma solidity ^0.4.24;
 
-/**
+import "../ownership/Ownable.sol";
+
+ /**
  * @title WhitepaperVersioning
- * @dev Bi-directional Linked list of Whitepapers.
+ * @dev Managing list of whitepapers associated with a contract address.
+ * @dev For ICO whitepaper version tracking purpose, the associated contract address shall be
+ * @dev usually token contract address or token sale contract address.
  * @dev Contents of whitepapers is expected to be stored in IPFS.
- * @dev Put IPFS hash of the first version of whitepaper in your project's contract
- * @dev such as a project token contract, or token sale contractl.
  */
 contract WhitepaperVersioning {
-    mapping (string => Whitepaper) private whitepapers;
-    event Post(string indexed ipfsHash, uint256 version, address indexed author);
+    mapping (address => Whitepaper[]) private whitepapers;
+    mapping (address => address) private authors;
+    event Post(address indexed _contract, uint256 indexed _version, string _ipfsHash, address _author);
 
     struct Whitepaper {
         uint256 version;
-        address author;
-        string prev;
-        string next;
-        bool initialized;
+        string ipfsHash;
     }
 
     /**
@@ -27,57 +27,62 @@ contract WhitepaperVersioning {
 
     /**
      * @dev Function to post a new whitepaper
+     * @param _version uint256 Version number in integer
      * @param _ipfsHash string IPFS hash of the posting whitepaper
-     * @param _version uint8 Version number in integer
-     * @param _prev IPFS hash of the previous version whitepaper (if initial version, set "HEAD")
      * @return status bool
      */
-    function post (string _ipfsHash, uint256 _version, string _prev) public returns (bool) {
-        // HEAD is reserved word, and cannot set as ipfsHash
-        require(keccak256(_ipfsHash) != keccak256("HEAD"));
-        
-        // Check if the IPFS hash doesn't exist already.
-        require(!whitepapers[_ipfsHash].initialized);
-
-        // Check if the specified version is counted up
-        require(_version > whitepapers[_prev].version);
+    function pushWhitepaper (Ownable _contract, uint256 _version, string _ipfsHash) public returns (bool) {
+        uint256 num = whitepapers[_contract].length;
+        if(num == 0){
+            // If the posting whitepaper is the initial, only the target contract owner can post.
+            require(_contract.owner() == msg.sender);
+            authors[_contract] = msg.sender;
+        }else{
+            // Check if the initial version whitepaper's author is the msg.sender
+            require(authors[_contract] == msg.sender);
+            // Check if the version is greater than the previous version
+            require(whitepapers[_contract][num-1].version < _version);
+        }
     
-        // Check if a previous whitepaper's author is identical to the posting whitepaper's author
-        // or the posting whitepaper is the initial version (HEAD version)
-        require(keccak256(_prev) == keccak256("HEAD") || whitepapers[_prev].author == msg.sender);
-
-        // Check if there is no fork from the previous version
-        require(bytes(whitepapers[_prev].next).length == 0);
-    
-        whitepapers[_prev].next = _ipfsHash;
-        whitepapers[_ipfsHash] = Whitepaper(_version, msg.sender, _prev, "", true);
-        emit Post(_ipfsHash, _version, msg.sender);
+        whitepapers[_contract].push(Whitepaper(_version, _ipfsHash));
+        emit Post(_contract, _version, _ipfsHash, msg.sender);
         return true;
     }
   
     /**
-     * @dev Look up whitepaper by IPFS hash as a key
-     * @param _ipfsHash string IPFS hash of the whitepaper to look up
-     * @return ipfsHash string IPFS hash of the whitepaper
+     * @dev Look up whitepaper at the specified index
+     * @param _contract address Target contract address associated with a whitepaper
+     * @param _index uint256 Index number of whitepapers associated with the specified contract address
      * @return version uint8 Version number in integer
+     * @return ipfsHash string IPFS hash of the whitepaper
      * @return author address Address of an account who posted the whitepaper
-     * @return prev string IPSS hash of the previous version whitepaper (if initial version, it's "HEAD")
-     * @return next string IPFS hash of the next version whitepaper if available
      */
-    function get (string _ipfsHash) public view returns (
-        string ipfsHash,
+    function getWhitepaperAt (address _contract, uint256 _index) public view returns (
         uint256 version,
-        address author,
-        string prev,
-        string next
+        string ipfsHash,
+        address author
     ) {
         return (
-           _ipfsHash,
-            whitepapers[_ipfsHash].version,
-            whitepapers[_ipfsHash].author,
-            whitepapers[_ipfsHash].prev,
-            whitepapers[_ipfsHash].next
+            whitepapers[_contract][_index].version,
+            whitepapers[_contract][_index].ipfsHash,
+            authors[_contract]
         );
+    }
+    
+    /**
+     * @dev Look up whitepaper at the specified index
+     * @param _contract address Target contract address associated with a whitepaper
+     * @return version uint8 Version number in integer
+     * @return ipfsHash string IPFS hash of the whitepaper
+     * @return author address Address of an account who posted the whitepaper
+     */
+    function getLatestWhitepaper (address _contract) public view returns (
+        uint256 version,
+        string ipfsHash,
+        address author
+    ) {
+        uint256 latest = whitepapers[_contract].length - 1;
+        return getWhitepaperAt(_contract, latest);
     }
 }
 
