@@ -10,8 +10,8 @@ https://icovo.co/
 DAICOVO works under at least the following environment.
 
 - Node v8.10.0
-- [Truffle](https://github.com/trufflesuite/truffle) v4.1.7 (core: 4.1.7)
-- [Solidity](https://github.com/ethereum/solidity) v0.4.23 (Truffle includes solidity compilers)
+- [Truffle](https://github.com/trufflesuite/truffle) v4.1.13 (core: 4.1.13)
+- [Solidity](https://github.com/ethereum/solidity) v0.4.24 (Truffle includes solidity compilers)
 
 
 ### Installing Truffle
