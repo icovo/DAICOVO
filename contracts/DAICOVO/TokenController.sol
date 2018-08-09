@@ -1,6 +1,5 @@
 pragma solidity ^0.4.24;
 
-import "./TimeLockPool.sol";
 import "../token/extentions/MintableToken.sol";
 import "../math/SafeMath.sol";
 import "../ownership/Ownable.sol";

@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 
 import "./TokenController.sol";
+import "./TimeLockPool.sol";
 import "./TokenSale.sol";
 import "../crowdsale/distribution/FinalizableCrowdsale.sol";
 import "../crowdsale/validation/WhitelistedCrowdsale.sol";
