@@ -9,8 +9,6 @@ import "./DaicovoStandardToken.sol";
  * @dev icon field compatible wallet app can load a token icon image from IPFS.
  */
 contract OVOToken is DaicovoStandardToken {
-    string public icon;
     constructor () public DaicovoStandardToken("ICOVO", "OVO", 9) {
-        icon = "QmXMDG2UnMQ7rFqxRN2LVA3ad2FLNTarDXZijdrctt8vpo";
     }
 }
