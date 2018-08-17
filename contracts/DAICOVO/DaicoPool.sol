@@ -140,6 +140,18 @@ contract DaicoPool is Ownable {
         return available_balance;
     }
 
+    function isStateInitializing() public view returns(bool) {
+        return (status == Status.Initializing); 
+    }
+
+    function isStateProjectInProgress() public view returns(bool) {
+        return (status == Status.ProjectInProgress); 
+    }
+
+    function isStateDestructed() public view returns(bool) {
+        return (status == Status.Destructed); 
+    }
+
     function updateReleasedBalance() internal {
         releasedBalance = getReleasedBalance();
         lastUpdatedTime = block.timestamp;

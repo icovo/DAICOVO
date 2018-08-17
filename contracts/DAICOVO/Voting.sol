@@ -272,6 +272,7 @@ contract Voting{
     /// @return Index of the proposal.
     function addProposal (Subject _subject, string _reason) internal returns(uint256) {
         require(msg.value == proposalCostWei);
+        require(DaicoPool(poolAddr).isStateProjectInProgress());
         poolAddr.transfer(msg.value);
 
         Proposal memory proposal;
