@@ -68,7 +68,8 @@ contract('TokenController test', async (accounts) => {
     
     assert( await tc.mint(founder, amountDistribute, {from: founder}) != 0x0);
     assert( await token.approve(tlp.address, amountDistribute, {from: founder}) != 0x0);
-    assert( await tlp.depositERC20(token_addr, investor1, amountDistribute, (Date.now()/1000) +300, {from: founder}) != 0x0);
+    let timestamp = await web3.eth.getBlock('latest').timestamp;
+    assert( await tlp.depositERC20(token_addr, investor1, amountDistribute, timestamp +300, {from: founder}) != 0x0);
 
     let returned = await tlp.getLockedBalanceOf(investor1, token_addr);
     let expected = amountBefore + amountDistribute;

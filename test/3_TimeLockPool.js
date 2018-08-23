@@ -1,5 +1,7 @@
 require('date-utils');
 
+utils = require('./utilities.js');
+
 var OVOToken = artifacts.require("./OVOToken.sol");
 var ERC20Interface = artifacts.require("./ERC20Interface.sol");
 var TokenController = artifacts.require("./TokenController.sol");
@@ -31,6 +33,7 @@ contract('TimeLockPool test', async (accounts) => {
     let token = await OVOToken.deployed();
     let tlp = await TimeLockPool.deployed();
 
+    //Check if it's unavailble
     try{
        await tlp.withdraw(investor2, token.address, 100, {from:investor2});
        assert(false);
@@ -48,7 +51,8 @@ contract('TimeLockPool test', async (accounts) => {
 
     let amountBefore = parseInt(await tlp.getLockedBalanceOf(investor2, token.address));
     let amountDistribute = 5 * 10**9;
-    let releaseTime = parseInt(Date.now()/1000) + 300;
+    let timestamp = await web3.eth.getBlock('latest').timestamp;
+    let releaseTime = timestamp + 300;
  
     assert( await tc.mint(founder, amountDistribute, {from: founder}) != 0x0);
     assert( await token.approve(tlp.address, amountDistribute, {from: founder}) != 0x0);
@@ -61,14 +65,27 @@ contract('TimeLockPool test', async (accounts) => {
     let returned2 = await tlp.getNextReleaseTimeOf(investor2, token.address);
     let expected2 = releaseTime;
     assert.equal(returned2, expected2);
+
+    //Check if it's still unavailble
+    try{
+       await tlp.withdraw(investor2, token.address, 100, {from:investor2});
+       assert(false);
+    }catch(error){
+        assert(error);
+        assert(error.message.startsWith(ERROR_PREFIX + "revert"), "got '" + error.message);
+       /* test passed */
+    }
+
   })
 
   it("Deposit ETH test", async () => {
     let tlp = await TimeLockPool.deployed();
 
+    //'0x0' stands for ETH
     let amountBefore = parseInt(await tlp.getLockedBalanceOf(investor2, '0x0'));
     let amountDeposit = 6 * 10**9;
-    let releaseTime = parseInt(Date.now()/1000) + 300;
+    let timestamp = await web3.eth.getBlock('latest').timestamp;
+    let releaseTime = timestamp + 300;
 
     assert( await tlp.depositETH(investor2, releaseTime, {from: founder, value: amountDeposit}) != 0x0);
 
@@ -79,20 +96,46 @@ contract('TimeLockPool test', async (accounts) => {
     let returned2 = await tlp.getNextReleaseTimeOf(investor2, '0x0');
     let expected2 = releaseTime;
     assert.equal(returned2, expected2);
+
+    //Check if it's still unavailble
+    try{
+       await tlp.withdraw(investor2, '0x0', 100, {from:investor2});
+       assert(false);
+    }catch(error){
+        assert(error);
+        assert(error.message.startsWith(ERROR_PREFIX + "revert"), "got '" + error.message);
+       /* test passed */
+    }
+
+
   })
 
-  it("Withdraw ERC20 test", async () => {
+  it("Withdraw ERC20 from receiver test", async () => {
     let tc = await TokenController.deployed();
     let tlp = await TimeLockPool.deployed();
     let token = await OVOToken.deployed();
 
     let amountBefore = parseInt(await tlp.getAvailableBalanceOf(investor3, token.address));
     let amountDistribute = 5 * 10**9;
-    let releaseTime = parseInt(Date.now()/1000) - 300;
+    let timestamp = await web3.eth.getBlock('latest').timestamp;
+    let releaseTime = timestamp + 300;
  
     assert( await tc.mint(founder, amountDistribute, {from: founder}) != 0x0);
     assert( await token.approve(tlp.address, amountDistribute, {from: founder}) != 0x0);
     assert( await tlp.depositERC20(token.address, investor3, amountDistribute, releaseTime, {from: founder}) != 0x0);
+
+    //Check if it's still unavailble
+    try{
+       await tlp.withdraw(investor3, token.address, 100, {from:investor3});
+       assert(false);
+    }catch(error){
+        assert(error);
+        assert(error.message.startsWith(ERROR_PREFIX + "revert"), "got '" + error.message);
+       /* test passed */
+    }
+
+    // 10 mins past
+    await utils.increaseTime(600);
 
     let returned1 = await tlp.getAvailableBalanceOf(investor3, token.address);
     let expected1 = amountBefore + amountDistribute;
@@ -111,15 +154,29 @@ contract('TimeLockPool test', async (accounts) => {
     assert.equal(returned3, expected3);
   })
 
-  it("Withdraw ETH test", async () => {
+  it("Withdraw ETH from receiver test", async () => {
     let tlp = await TimeLockPool.deployed();
     let token = await OVOToken.deployed();
 
     let availableBalanceBefore = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0'),'ether'));
     let amountDistribute = 1;
-    let releaseTime = parseInt(Date.now()/1000) - 300;
+    let timestamp = await web3.eth.getBlock('latest').timestamp;
+    let releaseTime = timestamp + 300;
  
     assert( await tlp.depositETH(investor3, releaseTime, {from: founder, value:web3.toWei(amountDistribute,"ether")}) != 0x0);
+
+    //Check if it's still unavailble
+    try{
+       await tlp.withdraw(investor3, '0x0', 100, {from:investor3});
+       assert(false);
+    }catch(error){
+        assert(error);
+        assert(error.message.startsWith(ERROR_PREFIX + "revert"), "got '" + error.message);
+       /* test passed */
+    }
+
+    // 10 mins past
+    await utils.increaseTime(600);
 
     let returned1 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0'),'ether'));
     let expected1 = availableBalanceBefore + amountDistribute;
@@ -127,7 +184,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     let balanceBefore = parseFloat(web3.fromWei(await web3.eth.getBalance(investor3),'ether'));
 
-    assert( await tlp.withdraw(investor3, '0x0', 5, {from: founder}) != 0x0);
+    assert( await tlp.withdraw(investor3, '0x0', 5, {from: investor3}) != 0x0);
 
     let returned2 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0')));
     let expected2 = 0;
@@ -137,6 +194,94 @@ contract('TimeLockPool test', async (accounts) => {
     let expected3 = balanceBefore + amountDistribute * 0.99;
     assert.isAbove(returned3, expected3);
   })
+
+  it("Withdraw ERC20 from the other test", async () => {
+    let tc = await TokenController.deployed();
+    let tlp = await TimeLockPool.deployed();
+    let token = await OVOToken.deployed();
+
+    let amountBefore = parseInt(await tlp.getAvailableBalanceOf(investor3, token.address));
+    let amountDistribute = 5 * 10**9;
+    let timestamp = await web3.eth.getBlock('latest').timestamp;
+    let releaseTime = timestamp + 300;
+ 
+    assert( await tc.mint(founder, amountDistribute, {from: founder}) != 0x0);
+    assert( await token.approve(tlp.address, amountDistribute, {from: founder}) != 0x0);
+    assert( await tlp.depositERC20(token.address, investor3, amountDistribute, releaseTime, {from: founder}) != 0x0);
+
+    //Check if it's still unavailble
+    try{
+       await tlp.withdraw(investor3, token.address, 100, {from:investor4});
+       assert(false);
+    }catch(error){
+        assert(error);
+        assert(error.message.startsWith(ERROR_PREFIX + "revert"), "got '" + error.message);
+       /* test passed */
+    }
+
+    // 10 mins past
+    await utils.increaseTime(600);
+
+    let returned1 = await tlp.getAvailableBalanceOf(investor3, token.address);
+    let expected1 = amountBefore + amountDistribute;
+    assert.equal(returned1, expected1);
+
+    let balanceBefore = parseInt(await token.balanceOf(investor3));
+
+    assert( await tlp.withdraw(investor3, token.address, 5, {from: investor4}) != 0x0);
+
+    let returned2 = await tlp.getAvailableBalanceOf(investor3, token.address);
+    let expected2 = 0;
+    assert.equal(returned2, expected2);
+
+    let returned3 = await token.balanceOf(investor3);
+    let expected3 = balanceBefore + amountDistribute + amountBefore;
+    assert.equal(returned3, expected3);
+  })
+
+  it("Withdraw ETH from the other test", async () => {
+    let tlp = await TimeLockPool.deployed();
+    let token = await OVOToken.deployed();
+
+    let availableBalanceBefore = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0'),'ether'));
+    let amountDistribute = 1;
+    let timestamp = await web3.eth.getBlock('latest').timestamp;
+    let releaseTime = timestamp + 300;
+ 
+    assert( await tlp.depositETH(investor3, releaseTime, {from: founder, value:web3.toWei(amountDistribute,"ether")}) != 0x0);
+
+    //Check if it's still unavailble
+    try{
+       await tlp.withdraw(investor3, '0x0', 100, {from:investor4});
+       assert(false);
+    }catch(error){
+        assert(error);
+        assert(error.message.startsWith(ERROR_PREFIX + "revert"), "got '" + error.message);
+       /* test passed */
+    }
+
+    // 10 mins past
+    await utils.increaseTime(600);
+
+    let returned1 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0'),'ether'));
+    let expected1 = availableBalanceBefore + amountDistribute;
+    assert.equal(returned1, expected1);
+
+    let balanceBefore = parseFloat(web3.fromWei(await web3.eth.getBalance(investor3),'ether'));
+
+    assert( await tlp.withdraw(investor3, '0x0', 5, {from: investor4}) != 0x0);
+
+    let returned2 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0')));
+    let expected2 = 0;
+    assert.equal(returned2, expected2);
+
+    let returned3 = parseFloat(web3.fromWei(await web3.eth.getBalance(investor3)));
+    let expected3 = balanceBefore + amountDistribute * 0.99;
+    assert.isAbove(returned3, expected3);
+  })
+
+
+
 
 });
 
