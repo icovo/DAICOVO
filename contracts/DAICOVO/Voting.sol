@@ -156,7 +156,7 @@ contract Voting{
         }
 
         require(ERC20Interface(votingTokenAddr).transfer(account, amount));
-        ReturnDeposit(account, amount);
+        emit ReturnDeposit(account, amount);
  
         return true;
     }
