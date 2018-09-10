@@ -35,7 +35,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     //Check if it's unavailble
     try{
-       await tlp.withdraw(investor2, token.address, 100, {from:investor2});
+       await tlp.withdraw(investor2, token.address, 0, 100, {from:investor2});
        assert(false);
     }catch(error){
         assert(error);
@@ -68,7 +68,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     //Check if it's still unavailble
     try{
-       await tlp.withdraw(investor2, token.address, 100, {from:investor2});
+       await tlp.withdraw(investor2, token.address, 0, 100, {from:investor2});
        assert(false);
     }catch(error){
         assert(error);
@@ -99,7 +99,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     //Check if it's still unavailble
     try{
-       await tlp.withdraw(investor2, '0x0', 100, {from:investor2});
+       await tlp.withdraw(investor2, '0x0', 0, 100, {from:investor2});
        assert(false);
     }catch(error){
         assert(error);
@@ -126,7 +126,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     //Check if it's still unavailble
     try{
-       await tlp.withdraw(investor3, token.address, 100, {from:investor3});
+       await tlp.withdraw(investor3, token.address, 0, 100, {from:investor3});
        assert(false);
     }catch(error){
         assert(error);
@@ -143,7 +143,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     let balanceBefore = parseInt(await token.balanceOf(investor3));
 
-    assert( await tlp.withdraw(investor3, token.address, 5, {from: investor3}) != 0x0);
+    assert( await tlp.withdraw(investor3, token.address, 0, 5, {from: investor3}) != 0x0);
 
     let returned2 = await tlp.getAvailableBalanceOf(investor3, token.address);
     let expected2 = 0;
@@ -167,7 +167,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     //Check if it's still unavailble
     try{
-       await tlp.withdraw(investor3, '0x0', 100, {from:investor3});
+       await tlp.withdraw(investor3, '0x0', 0, 100, {from:investor3});
        assert(false);
     }catch(error){
         assert(error);
@@ -184,7 +184,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     let balanceBefore = parseFloat(web3.fromWei(await web3.eth.getBalance(investor3),'ether'));
 
-    assert( await tlp.withdraw(investor3, '0x0', 5, {from: investor3}) != 0x0);
+    assert( await tlp.withdraw(investor3, '0x0', 0, 5, {from: investor3}) != 0x0);
 
     let returned2 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0')));
     let expected2 = 0;
@@ -211,7 +211,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     //Check if it's still unavailble
     try{
-       await tlp.withdraw(investor3, token.address, 100, {from:investor4});
+       await tlp.withdraw(investor3, token.address, 0, 100, {from:investor4});
        assert(false);
     }catch(error){
         assert(error);
@@ -228,7 +228,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     let balanceBefore = parseInt(await token.balanceOf(investor3));
 
-    assert( await tlp.withdraw(investor3, token.address, 5, {from: investor4}) != 0x0);
+    assert( await tlp.withdraw(investor3, token.address, 0, 5, {from: investor4}) != 0x0);
 
     let returned2 = await tlp.getAvailableBalanceOf(investor3, token.address);
     let expected2 = 0;
@@ -252,7 +252,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     //Check if it's still unavailble
     try{
-       await tlp.withdraw(investor3, '0x0', 100, {from:investor4});
+       await tlp.withdraw(investor3, '0x0', 0, 100, {from:investor4});
        assert(false);
     }catch(error){
         assert(error);
@@ -269,7 +269,7 @@ contract('TimeLockPool test', async (accounts) => {
 
     let balanceBefore = parseFloat(web3.fromWei(await web3.eth.getBalance(investor3),'ether'));
 
-    assert( await tlp.withdraw(investor3, '0x0', 5, {from: investor4}) != 0x0);
+    assert( await tlp.withdraw(investor3, '0x0', 0, 5, {from: investor4}) != 0x0);
 
     let returned2 = parseFloat(web3.fromWei(await tlp.getAvailableBalanceOf(investor3, '0x0')));
     let expected2 = 0;
