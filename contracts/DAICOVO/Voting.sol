@@ -32,6 +32,7 @@ contract Voting{
     }
 
     Proposal[] public proposals;
+    uint public constant PROPOSAL_EMPTY = 0;
 
     enum Subject {
         RaiseTap,
@@ -65,6 +66,18 @@ contract Voting{
         require(_poolAddr != address(0x0));
         votingTokenAddr = _votingTokenAddr;
         poolAddr = _poolAddr;
+
+        // Insert an empty proposal as the header in order to make index 0 to be missing number.
+        Proposal memory proposal;
+        proposal.subject = Subject.RaiseTap;
+        proposal.reason = "PROPOSAL_HEADER";
+        proposal.start_time = block.timestamp -1;
+        proposal.end_time = block.timestamp -1;
+        proposal.voter_count = 0;
+        proposal.isFinalized = true;
+
+        proposals.push(proposal);
+        assert(proposals.length == 1);
     }
 
     /// @dev Make a TAP raising proposal. It costs certain amount of ETH.
@@ -103,9 +116,10 @@ contract Voting{
     function vote (bool agree, uint256 amount) external {
         require(ERC20Interface(votingTokenAddr).transferFrom(msg.sender, this, amount));
         uint256 pid = this.getCurrentVoting();
+        require(pid != PROPOSAL_EMPTY);
 
-        require(proposals[pid].start_time >= block.timestamp);
-        require(proposals[pid].end_time < block.timestamp);
+        require(proposals[pid].start_time <= block.timestamp);
+        require(proposals[pid].end_time >= block.timestamp);
 
         if (deposits[pid][msg.sender] == 0) {
             proposals[pid].voter_count = proposals[pid].voter_count.add(1);
@@ -121,20 +135,22 @@ contract Voting{
     /// @return 
     function finalizeVoting () external {
         uint256 pid = this.getCurrentVoting();
+        require(pid != PROPOSAL_EMPTY);
         require(proposals[pid].end_time <= block.timestamp);
         require(!proposals[pid].isFinalized);
 
         proposals[pid].isFinalized = true;
 
-        if (isPassed(pid)) {
-            if (isSubjectRaiseTap(pid)) {
+        if (isSubjectRaiseTap(pid)) {
+            queued[uint(Subject.RaiseTap)] = false;
+            if (isPassed(pid)) {
                 DaicoPool(poolAddr).raiseTap(proposals[pid].tapMultiplierRate);
-                queued[uint(Subject.RaiseTap)] = false;
-            } else if (isSubjectDestruction(pid)) {
+            }
+
+        } else if (isSubjectDestruction(pid)) {
+            queued[uint(Subject.Destruction)] = false;
+            if (isPassed(pid)) {
                 DaicoPool(poolAddr).selfDestruction();
-                queued[uint(Subject.Destruction)] = false;
-            } else {
-                revert();
             }
         }
     }
@@ -144,9 +160,11 @@ contract Voting{
     /// @return 
     function returnToken (address account) external returns(bool) {
         uint256 amount = 0;
-        uint256 currentVoting = this.getCurrentVoting();
     
-        for (uint256 pid = 0; pid < currentVoting; pid++) {
+        for (uint256 pid = 0; pid < proposals.length; pid++) {
+            if(!proposals[pid].isFinalized){
+              break;
+            }
             amount = amount.add(deposits[pid][account]);
             deposits[pid][account] = 0;
         }
@@ -178,7 +196,7 @@ contract Voting{
                 return i;
             }
         }
-        revert();
+        return PROPOSAL_EMPTY;
     }
 
     /// @dev Check if a proposal has been agreed or not.
@@ -220,7 +238,7 @@ contract Voting{
     /// @param pid Index of a proposal.
     /// @return Text of the reason that is set when the proposal made. 
     function getReason (uint256 pid) external view returns(string) {
-        require(pid <= getCurrentVoting());
+        require(pid < proposals.length);
         return proposals[pid].reason;
     }
 
@@ -228,7 +246,7 @@ contract Voting{
     /// @param pid Index of a proposal.
     /// @return True if it's TAP raising. False otherwise.
     function isSubjectRaiseTap (uint256 pid) public view returns(bool) {
-        require(pid <= getCurrentVoting());
+        require(pid < proposals.length);
         return proposals[pid].subject == Subject.RaiseTap;
     }
 
@@ -236,7 +254,7 @@ contract Voting{
     /// @param pid Index of a proposal.
     /// @return True if it's self destruction. False otherwise.
     function isSubjectDestruction (uint256 pid) public view returns(bool) {
-        require(pid <= getCurrentVoting());
+        require(pid < proposals.length);
         return proposals[pid].subject == Subject.Destruction;
     }
 
@@ -244,7 +262,7 @@ contract Voting{
     /// @param pid Index of a proposal.
     /// @return The number of voters.
     function getVoterCount (uint256 pid) external view returns(uint256) {
-        require(pid <= getCurrentVoting());
+        require(pid < proposals.length);
         return proposals[pid].voter_count;
     }
 
@@ -252,7 +270,7 @@ contract Voting{
     /// @param pid Index of a proposal.
     /// @return The number of votes that agrees the proposal.
     function getAyes (uint256 pid) public view returns(uint256) {
-        require(pid <= getCurrentVoting());
+        require(pid < proposals.length);
         require(proposals[pid].isFinalized);
         return proposals[pid].votes[true];
     }
@@ -261,7 +279,7 @@ contract Voting{
     /// @param pid Index of a proposal.
     /// @return The number of votes that disagrees the proposal.
     function getNays (uint256 pid) public view returns(uint256) {
-        require(pid <= getCurrentVoting());
+        require(pid < proposals.length);
         require(proposals[pid].isFinalized);
         return proposals[pid].votes[false];
     }
@@ -283,8 +301,8 @@ contract Voting{
         proposal.voter_count = 0;
         proposal.isFinalized = false;
 
-        uint256 newID = proposals.length;
-        proposals[newID] = proposal;
+        proposals.push(proposal);
+        uint256 newID = proposals.length - 1;
         return newID;
     }
 }
