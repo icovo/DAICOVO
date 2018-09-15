@@ -110,7 +110,7 @@ contract DaicoPool is Ownable {
     function selfDestruction() external onlyVoting {
         status = Status.Destructed;
         updateReleasedBalance();
-        releasedBalance.add(closingRelease.mul(tap));
+        releasedBalance = releasedBalance.add(closingRelease.mul(tap));
         updateTap(0);
 
         uint256 _totalSupply = ERC20Interface(votingTokenAddr).totalSupply(); 
