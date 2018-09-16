@@ -4,9 +4,10 @@ import "../ownership/Ownable.sol";
 import "../math/SafeMath.sol";
 import "../token/ERC20/ERC20Interface.sol";
 import "./Voting.sol";
+import "./PoolAndSaleInterface.sol";
 
 
-contract DaicoPool is Ownable {
+contract DaicoPool is PoolAndSaleInterface, Ownable {
     using SafeMath for uint256;
 
     address public tokenSaleAddr;

@@ -5,7 +5,7 @@ import "./TimeLockPool.sol";
 import "./TokenSale.sol";
 import "../crowdsale/distribution/FinalizableCrowdsale.sol";
 import "../crowdsale/validation/WhitelistedCrowdsale.sol";
-import "./DaicoPool.sol";
+import "./PoolAndSaleInterface.sol";
 import "../math/SafeMath.sol";
 
 
@@ -54,8 +54,8 @@ contract TokenSaleManager is Ownable {
         token = _token;
 
         poolAddr = _daicoPoolAddr;
-        require(DaicoPool(poolAddr).votingTokenAddr() == address(token));
-        DaicoPool(poolAddr).setTokenSaleContract(this);
+        require(PoolAndSaleInterface(poolAddr).votingTokenAddr() == address(token));
+        PoolAndSaleInterface(poolAddr).setTokenSaleContract(this);
 
     }
 
@@ -202,7 +202,7 @@ contract TokenSaleManager is Ownable {
         }
         require(TokenController(tokenControllerAddr).closeTokensale());
         isFinalized = true;
-        DaicoPool(poolAddr).startProject();
+        PoolAndSaleInterface(poolAddr).startProject();
     }
 }
 
