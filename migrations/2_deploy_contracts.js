@@ -18,7 +18,7 @@ module.exports = function(deployer) {
     return deployer.deploy(TimeLockPool);
   })
   .then(function() {
-    return deployer.deploy(DaicoPool, OVOToken.address, 9703 * 10**11, 2800 * 10**18);
+    return deployer.deploy(DaicoPool, OVOToken.address, 13503 * 10**11, 9000 * 10**18);
   })
   .then(function() {
     return deployer.deploy(
