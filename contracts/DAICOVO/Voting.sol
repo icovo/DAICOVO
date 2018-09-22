@@ -214,7 +214,7 @@ contract Voting{
     /// @param pid Index of a proposal.
     /// @return True if the voting already started. False otherwise. 
     function isStarted (uint256 pid) public view returns(bool) {
-        if (pid > getCurrentVoting()) {
+        if (pid > proposals.length) {
             return false;
         } else if (block.timestamp >= proposals[pid].start_time) {
             return true;
@@ -226,7 +226,7 @@ contract Voting{
     /// @param pid Index of a proposal.
     /// @return True if the voting already ended. False otherwise. 
     function isEnded (uint256 pid) public view returns(bool) {
-        if (pid > getCurrentVoting()) {
+        if (pid > proposals.length) {
             return false;
         } else if (block.timestamp >= proposals[pid].end_time) {
             return true;
