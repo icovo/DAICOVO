@@ -159,13 +159,14 @@ contract TimeLockPool{
     /// @dev Release the available balance of an account.
     /// @param account An account to receive tokens.
     /// @param tokenAddr An address of ERC20/ERC223 token.
-    /// @param max_count Max number of records to withdraw.
+    /// @param index_from Starting index of records to withdraw.
+    /// @param index_to Ending index of records to withdraw.
     /// @return True if it is successful, revert otherwise.
-    function withdraw (address account, address tokenAddr, uint256 max_count) external returns (bool) {
+    function withdraw (address account, address tokenAddr, uint256 index_from, uint256 index_to) external returns (bool) {
         require(account != address(0x0));
 
         uint256 release_amount = 0;
-        for (uint256 i = 0; i < lockedBalances[account][tokenAddr].length && i < max_count; i++) {
+        for (uint256 i = index_from; i < lockedBalances[account][tokenAddr].length && i < index_to + 1; i++) {
             if (lockedBalances[account][tokenAddr][i].balance > 0 &&
                 lockedBalances[account][tokenAddr][i].releaseTime <= block.timestamp) {
 
